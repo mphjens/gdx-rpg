@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,28 +19,29 @@ import java.util.List;
  *
  * @author Jens
  */
-public abstract class Entity {
+public abstract class Entity implements Disposable{
     public String name = "";
     protected GameWorld world;
     
-    private ArrayList<AnimatedSprite> sprites;
+    private ArrayList<Sprite> sprites;
     protected Vector2 position;
     protected boolean inWorld;
     protected boolean loaded;
     protected boolean destroyed;
     
     public Entity(){
-        sprites = new ArrayList<AnimatedSprite>();
+        sprites = new ArrayList<Sprite>();
     }
     
-    public abstract void update(float deltatime);
-    
-    public void setUp(String imgPath, List<SpriteAnimationInfo> animations, int spritesheetPadding) {
-        sprites.add(new AnimatedSprite(imgPath, animations, spritesheetPadding));
+    public void update(float deltatime){
+        this.setSpritePositions(this.position);
     }
-    
+            
+    public void setUp(TextureRegion tex, float width, float height) {
+        sprites.add(new Sprite(tex, width, height));
+    }
+        
     public void loadEntity(){
-        sprites.get(0).loadAnimations();
         loaded = true;
     }
         
@@ -58,6 +60,7 @@ public abstract class Entity {
         }
         
         destroyed = true;
+        this.dispose();
     }
         
     /**
@@ -76,6 +79,10 @@ public abstract class Entity {
     
     public void setPosition(Vector2 pos){
         this.position = pos;
+    }
+
+    public void setPosition(float x, float y){
+        this.setPosition(new Vector2(x, y));
     }
     
     public Vector2 getPosition(){
@@ -100,14 +107,14 @@ public abstract class Entity {
     /**
      * @return the sprites
      */
-    public ArrayList<AnimatedSprite> getSprites() {
+    public ArrayList<Sprite> getSprites() {
         return sprites;
     }
     
     /**
      * @return the sprite at given index
      */
-    public AnimatedSprite getSprite(int index) {
+    public Sprite getSprite(int index) {
         return sprites.get(index);
     }
     
@@ -115,21 +122,41 @@ public abstract class Entity {
     /**
      * @param sprites the sprites to set
      */
-    public void setSprites(ArrayList<AnimatedSprite> sprites) {
+    public void setSprites(ArrayList<Sprite> sprites) {
         this.sprites = sprites;
     }
     
     /**
      * @param sprite the sprite to add
      */
-    public void addSprite(AnimatedSprite sprite) {
+    public void addSprite(Sprite sprite) {
         this.sprites.add(sprite);
     }
 
+    /**
+     * @param sprite the sprite to remove
+     */
+    public void removeSprite(Sprite sprite) {
+        this.sprites.remove(sprite);
+        sprite.dispose();
+    }
+    
+    public void removeAllSprites() {
+        while(sprites.size() > 0){
+            sprites.get(0).dispose();
+            sprites.remove(0);
+        }
+    }
+    
     /**
      * @return the world
      */
     public GameWorld getWorld() {
         return world;
+    }
+
+    @Override
+    public void dispose() {
+        this.removeAllSprites();
     }
 }

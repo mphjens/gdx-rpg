@@ -32,13 +32,11 @@ public abstract class PhysicsEntity extends Entity{
     public PhysicsEntity(){
     }
     
-    public void setUp(Shape bodyShape, BodyDef.BodyType bodyType, Constants.CollisionLayer colCategory, short collisionMask,  String imgPath, List<SpriteAnimationInfo> animations, int spritesheetPadding) {
-        super.setUp(imgPath, animations, spritesheetPadding);
+    public void setUpBody(Shape bodyShape, BodyDef.BodyType bodyType, Constants.CollisionLayer colCategory, short collisionMask) {
         this.bodyType = bodyType;
         this.bodyShape = bodyShape; 
         this.collisionCategory = colCategory;
         this.collisionMask = collisionMask;
-        
     }
     
     public abstract void onContactBegin(PhysicsEntity other, Contact contact);
@@ -82,10 +80,11 @@ public abstract class PhysicsEntity extends Entity{
     
     @Override
     public void setPosition(Vector2 pos){
-        if(this.body != null)
-            this.body.setTransform(pos.scl(1f/Constants.PHYSICS_SCALE), this.body.getAngle());
+        if(this.body != null){
+            this.body.setTransform(new Vector2(pos).scl(1f/Constants.PHYSICS_SCALE), this.body.getAngle());
+        }
     }
-    
+        
     @Override
     public Vector2 getPosition(){
         return new Vector2(this.body.getPosition()).scl(Constants.PHYSICS_SCALE);

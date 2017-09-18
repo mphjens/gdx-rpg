@@ -6,19 +6,14 @@
 package nl.vossnack.jensgdx;
 
 import nl.vossnack.jensgdx.World.GameWorld;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Shape;
+import java.awt.Point;
 import java.util.List;
 import nl.vossnack.jensgdx.Constants.Direction;
+import nl.vossnack.jensgdx.World.PathFinderNode;
 
 /**
  *
@@ -28,27 +23,35 @@ public abstract class CharacterEntity extends PhysicsEntity{
     
     protected CharacterStats stats;
     
+    float timer = 0;
+    
     Vector2 velocity;
     Vector2 direction;
     protected boolean canMove = true;
     protected boolean drawHealthBar = true;
     
+    public AnimatedSprite bodySprite;
+    
     protected Direction facingDirection;
     
     CharacterWeapon currentWeapon;
+    
+    public boolean shouldPatrol;
+    private boolean onpatrolwayback;
+    private int cPathIndex;
+    private List<PathFinderNode> currentPath;
+    Vector2 cNodePos;
+    Vector2 lastNodePos;
+    private float lastNodeTime = 0;
      
     public CharacterEntity(){
-        super();        
+        this.stats = new CharacterStats();
+        this.velocity = new Vector2();
+        this.direction = new Vector2();  
+        this.facingDirection = Direction.SOUTH;
     }
-    
-    public void setUp(String baseImagePath, List<SpriteAnimationInfo> animations, int spritesheetPadding, Shape colShape, CharacterStats stats){
-        super.setUp(colShape, BodyType.DynamicBody, 
-                    Constants.CollisionLayer.CATEGORY_FRIENDLY, 
-                    Constants.CollisionLayer.createMask(Constants.CollisionLayer.CATEGORY_ENEMY.getCode(), 
-                                                        Constants.CollisionLayer.CATEGORY_BOUNDS.getCode(), 
-                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode()), 
-                    baseImagePath, animations, spritesheetPadding);
-                
+     
+    public CharacterEntity(CharacterStats stats){
         this.stats = stats;
         this.velocity = new Vector2();
         this.direction = new Vector2();  
@@ -62,6 +65,10 @@ public abstract class CharacterEntity extends PhysicsEntity{
     @Override
     public void loadEntity(){
         super.loadEntity();
+        if(bodySprite != null){
+            bodySprite.loadAnimations();
+        }
+    
         this.bd.linearDamping = 35.0f;
     }
     
@@ -74,20 +81,43 @@ public abstract class CharacterEntity extends PhysicsEntity{
     @Override
     public void update(float deltatime){
         
-        if(this.canMove){
-            velocity.add(direction.x, direction.y);
+        
+        if(this.currentPath != null && this.canMove){
+            timer += deltatime;
+            float ratio = (timer - this.lastNodeTime) / (new Vector2(cNodePos.x - lastNodePos.x, cNodePos.y - lastNodePos.y).len() / this.stats.speed);
 
-            if(direction.x == 0f){
-                velocity.x = 0;
+            if(ratio >= 1f){                
+                if( this.cPathIndex == this.currentPath.size() - 1){
+                    if(this.shouldPatrol)
+                        this.onpatrolwayback = true;
+                    else{
+                        this.cancelPath();
+                        return;
+                    }
+                }else if(this.shouldPatrol && this.cPathIndex == 0){
+                    this.onpatrolwayback = false;
+                }
+                
+                
+                if(!this.onpatrolwayback)
+                    this.cPathIndex++;
+                else
+                    this.cPathIndex--;
+                
+                this.lastNodePos = this.cNodePos;
+                this.cNodePos = Constants.tileToWorldSpace(currentPath.get(cPathIndex).x, currentPath.get(cPathIndex).y).add(Constants.TILE_SIZE / 2f, 4f);
+                this.lastNodeTime = timer;
+                this.move(new Vector2(this.cNodePos).sub(lastNodePos));
+                ratio = ratio - 1f;
             }
-            if(direction.y == 0f){
-                velocity.y = 0;
-            }
-
-            velocity.clamp(-stats.speed, stats.speed);
-            //System.out.println(velocity + " " + this.body.getPosition() + " " + this.getSprite().getPosition());
-            body.applyLinearImpulse(velocity, this.body.getPosition(), true);
             
+            body.setTransform((lastNodePos.x + ((cNodePos.x - lastNodePos.x) * ratio)) / Constants.PHYSICS_SCALE, (lastNodePos.y + ((cNodePos.y - lastNodePos.y) * ratio)) / Constants.PHYSICS_SCALE, 0);
+        }
+        else{
+            if(this.canMove){
+                velocity.set(direction.nor().scl(stats.speed / Constants.PHYSICS_SCALE));
+                body.setTransform(this.body.getPosition().add(velocity.scl(deltatime)), 0);
+            }
         }
         
         if(this.currentWeapon != null)
@@ -104,37 +134,73 @@ public abstract class CharacterEntity extends PhysicsEntity{
     public void fireWeapon(int firemode){
         if(this.currentWeapon != null){
             currentWeapon.fire(firemode);
-            
         }
             
     }
+    
+    public void setFacingDirection(Direction dir){
+        if(facingDirection != dir){
+            switch(dir){
+            case NORTH:
+                facingDirection = Direction.NORTH;
+                this.bodySprite.setBaseAnimation("walk-up");
+                break;
+            case SOUTH:
+                facingDirection = Direction.SOUTH;
+                this.bodySprite.setBaseAnimation("walk-down");
+                break;
+            case EAST:
+                facingDirection = Direction.EAST;
+                this.bodySprite.setBaseAnimation("walk-right");
+                break;
+            case WEST:
+                facingDirection = Direction.WEST;
+                this.bodySprite.setBaseAnimation("walk-left");
+                break;
+            }
+        }
+    }
+    
+     public void setFacingDirection(Vector2 dir){
+            if(dir.x > 0){
+                setFacingDirection(Direction.EAST);
+            }else
+            if(dir.x < 0){
+                setFacingDirection(Direction.WEST);
+            }else if(dir.y > 0){
+                setFacingDirection(Direction.NORTH);
+            }else
+            if(dir.y < 0){
+                setFacingDirection(Direction.SOUTH);
+            }
+     }
         
     public void move(Vector2 dir){
         this.direction = dir;
-        if(dir.x == 0 && dir.y == 0)
+        if(dir.x == 0 && dir.y == 0 && this.currentPath == null)
         {
-            this.getSprite(0).pauseAnimation();
-            this.getSprite(0).showFrame(0);
+            this.bodySprite.pauseAnimation();
+            this.bodySprite.showFrame(0);
         } else{
-            if(dir.y > 0){
-                facingDirection = Direction.NORTH;
-                this.getSprite(0).setBaseAnimation("walk-up");
-            }else
-            if(dir.y < 0){
-                facingDirection = Direction.SOUTH;
-                this.getSprite(0).setBaseAnimation("walk-down");
-            }else
-            if(dir.x > 0){
-                facingDirection = Direction.EAST;
-                this.getSprite(0).setBaseAnimation("walk-right");
-            }else
-            if(dir.x < 0){
-                facingDirection = Direction.WEST;
-                this.getSprite(0).setBaseAnimation("walk-left");
-            }
-            
-            
+            setFacingDirection(dir);
         }
+    }
+    
+    public void setCurrentPath(List<PathFinderNode> path, boolean patrol){
+        this.currentPath = path;
+        this.shouldPatrol = patrol;
+        this.onpatrolwayback = false;
+        this.cPathIndex = 0;
+        if(currentPath.size() > 1)
+            this.cPathIndex = 1;
+        this.lastNodeTime = timer;
+        this.cNodePos = Constants.tileToWorldSpace(currentPath.get(cPathIndex).x, currentPath.get(cPathIndex).y).add(Constants.TILE_SIZE / 2f, 4f);
+        this.lastNodePos = this.getPosition();
+        this.move(new Vector2(this.cNodePos).sub(lastNodePos));
+    }
+    
+    public void cancelPath(){
+        this.currentPath = null;
     }
 
     /**
@@ -157,9 +223,9 @@ public abstract class CharacterEntity extends PhysicsEntity{
     public void setCanMove(boolean canMove) {
         this.canMove = canMove;
         if(canMove)
-            this.getSprite(0).resumeAnimation();
+            this.bodySprite.resumeAnimation();
         else
-            this.getSprite(0).pauseAnimation();
+            this.bodySprite.pauseAnimation();
     }
 
     @Override

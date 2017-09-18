@@ -32,7 +32,6 @@ public class CharacterFactory {
         character.loadEntity();
         character.addToWorld(world);
         character.setPosition(position);
-        
                 
         return character;
     }

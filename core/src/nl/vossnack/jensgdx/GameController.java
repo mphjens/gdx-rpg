@@ -7,7 +7,9 @@ package nl.vossnack.jensgdx;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.MathUtils;
@@ -20,11 +22,11 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 import nl.vossnack.jensgdx.Characters.CharacterFactory;
 import nl.vossnack.jensgdx.Characters.JgdxDebugCharacter;
-import nl.vossnack.jensgdx.Characters.TestRpgCharacter;
 import nl.vossnack.jensgdx.Characters.UniversalLpcSpriteMaleCharacter;
 import nl.vossnack.jensgdx.Weapons.BoomerangWeapon;
 import nl.vossnack.jensgdx.World.GameWorld;
 import nl.vossnack.jensgdx.World.JGdxMap;
+import nl.vossnack.jensgdx.World.PathFinder;
 import nl.vossnack.jensgdx.screens.GameScreen;
 
 /**
@@ -36,11 +38,14 @@ public class GameController{
     public GameScreen _screen;
     public OrthographicCamera _mainCamera;
     public GameWorld _world;
+    public InputMultiplexer _inputMultiplexer;
     
     float cameraSpeed = 2f;
     Vector2 charDirection;
     public CharacterEntity controlledCharacter;
     CharacterControls controlContext;
+    
+    
     
     double timer = 0;
     
@@ -50,9 +55,12 @@ public class GameController{
         _world = screen.world;
         
         //_world.loadWorld("maps/tavern.tmx");
-        for(int i = 0; i < 1000; i++)
-            _world.loadMap("maps/atlasmap_tilecollision_test.tmx");
-        
+        //for(int i = 0; i < 1000; i++)
+        _world.loadMap("maps/atlasmap_tilecollision_test.tmx");
+                
+        PrimitiveEntity square = new PrimitiveEntity(PrimitiveEntity.PrimitiveType.Square, Color.RED, 16f, 16f);
+        square.setPosition(new Vector2(0, 0));
+        square.addToWorld(_world);
         
         _mainCamera = screen.world.camera;
         
@@ -61,8 +69,15 @@ public class GameController{
         controlledCharacter = CharacterFactory.Create(screen.world, UniversalLpcSpriteMaleCharacter.class, _world.map.spawnPoints.get(0));
         controlledCharacter.equipWeapon(new BoomerangWeapon());
         
+        
+        CharacterFactory.Create(screen.world, UniversalLpcSpriteMaleCharacter.class, _world.map.spawnPoints.get(0));
+        
         controlContext = new CharacterControls();
-        Gdx.input.setInputProcessor(controlContext);
+        
+        _inputMultiplexer = new InputMultiplexer();
+        _inputMultiplexer.addProcessor(controlContext);
+        _inputMultiplexer.addProcessor(new DebugInputProcessor(this));
+        Gdx.input.setInputProcessor(_inputMultiplexer);
     }
     
     Vector3 vCamPos = new Vector3();

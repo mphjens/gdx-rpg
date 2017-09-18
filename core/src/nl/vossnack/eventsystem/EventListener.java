@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.vossnack.jensgdx;
+package nl.vossnack.eventsystem;
 
 /**
  *
  * @author Jens
  */
-public class CharacterStats {
-    
-    public float speed = 40.0f;
-    public float attack_speed = 1.0f;
-    public float max_health = 100;
-    public float health = max_health;
+public abstract interface EventListener {
+    abstract void onEventStart();
+    abstract void onEventEnd();
+    abstract void onEventUpdate(float deltatime);
 }

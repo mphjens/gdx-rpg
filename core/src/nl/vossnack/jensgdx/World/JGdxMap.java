@@ -114,7 +114,7 @@ public class JGdxMap implements Disposable{
             foregroundLayerIdxs[i] = foregroundIdxList.get(i);
         }
             
-        renderer = new OrthogonalTiledMapRenderer(this.tiledMap);
+        renderer = new OrthogonalTiledMapRenderer(this.tiledMap, world.worldSpriteBatch);
     }
     
 

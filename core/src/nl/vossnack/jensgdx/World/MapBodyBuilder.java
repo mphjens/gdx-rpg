@@ -37,6 +37,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import nl.vossnack.jensgdx.Constants;
+import nl.vossnack.jensgdx.PhysicsEntity;
 
 /**
  *
@@ -122,6 +123,7 @@ public class MapBodyBuilder {
         
         return bodies;
     }
+    
 
     public static ArrayList<Body> buildpolyShapes(MapLayer obstaclelayer, World box2dWorld, boolean triggers) {
         ppt = Constants.TILE_SIZE;

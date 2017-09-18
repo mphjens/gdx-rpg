@@ -6,8 +6,10 @@
 package nl.vossnack.jensgdx.World;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -37,8 +39,10 @@ public class GameWorld implements ContactListener{
     public boolean drawDebug;
     Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
     
+    public PathFinder pathFinder;
+    
     public List<Entity> entityList;
-    SpriteBatch entitySpriteBatch;
+    SpriteBatch worldSpriteBatch;
         
     public RayHandler lightingRayHandler;
     
@@ -48,14 +52,39 @@ public class GameWorld implements ContactListener{
     public boolean isLoaded;
     private double timer = 0;
     
+String vertexShader = "attribute vec4 a_position;    \n" + 
+                      "attribute vec4 a_color;\n" +
+                      "attribute vec2 a_texCoord0;\n" + 
+                      "uniform mat4 u_projTrans;\n" + 
+                      "varying vec4 v_color;" + 
+                      "varying vec2 v_texCoords;" + 
+                      "void main()                  \n" + 
+                      "{                            \n" + 
+                      "   v_color = vec4(1, 1, 1, 1); \n" + 
+                      "   v_texCoords = a_texCoord0; \n" + 
+                      "   a_position = a_position.xyzw; \n" +
+                      "   gl_Position =  u_projTrans * a_position;  \n"      + 
+                      "}                            \n" ;
+String fragmentShader = "#ifdef GL_ES\n" +
+                        "precision mediump float;\n" + 
+                        "#endif\n" + 
+                        "varying vec4 v_color;\n" + 
+                        "varying vec2 v_texCoords;\n" + 
+                        "uniform sampler2D u_texture;\n" + 
+                        "void main()                                  \n" + 
+                        "{                                            \n" + 
+                        "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" +
+                        "}";
+    
     public GameWorld(){        
         entityList = new ArrayList<Entity>();
-        entitySpriteBatch = new SpriteBatch();
+        worldSpriteBatch = new SpriteBatch();
     }
     
     public void loadMap(String filename){
         if(this.map != null)
             this.unloadMap();
+        
         
         isLoaded = false;
         mapFileName = filename;
@@ -74,6 +103,10 @@ public class GameWorld implements ContactListener{
         map = new JGdxMap();
         map.load(filename, this);
         
+        pathFinder = new PathFinder(this);
+        pathFinder.generateWorld();
+        //System.out.println(pathFinder.worldToString());
+                
         camera = new OrthographicCamera();
         camera.zoom = 0.15f;
         
@@ -89,10 +122,14 @@ public class GameWorld implements ContactListener{
         }
         this.physWorld.dispose();
         
+        this.pathFinder.dispose();
+        this.pathFinder = null;
+        
         this.map.dispose();
         this.map = null;
-        
+                
         this.physWorld = null;
+        this.isLoaded = false;
     }
     
     public void onResize(int width, int height){
@@ -132,8 +169,8 @@ public class GameWorld implements ContactListener{
             
             this.map.renderBackgroundLayers(deltatime, camera);
             
-            entitySpriteBatch.setProjectionMatrix(camera.combined);
-            entitySpriteBatch.begin();
+            worldSpriteBatch.setProjectionMatrix(camera.combined);
+            worldSpriteBatch.begin();
             for(int i = 0; i < entityList.size(); i++){
                   Entity e = entityList.get(i);
 
@@ -142,14 +179,15 @@ public class GameWorld implements ContactListener{
                     e.update(deltatime);
                     for(Sprite s : e.getSprites())
                     {
-                        s.render(entitySpriteBatch, deltatime);
+                        s.render(worldSpriteBatch, deltatime);
                     }
                   } else {
+                      System.out.println(e.name + " removed from drawlist");
                       entityList.remove(i);
                       i--;
                   }
             }
-            entitySpriteBatch.end();
+            worldSpriteBatch.end();
 
             this.map.renderForegroundLayers(deltatime, camera);
 
@@ -268,7 +306,7 @@ public class GameWorld implements ContactListener{
         map.dispose();
         physWorld.dispose();
         entityList.clear();
-        entitySpriteBatch.dispose();
+        worldSpriteBatch.dispose();
     }
     
 }

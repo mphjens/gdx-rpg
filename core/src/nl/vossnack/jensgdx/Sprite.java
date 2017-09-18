@@ -8,31 +8,29 @@ package nl.vossnack.jensgdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  *
  * @author Jens
  */
-public abstract class Sprite {
+public class Sprite implements Disposable{
     
     com.badlogic.gdx.graphics.g2d.Sprite gdxSprite;
     
-      protected Vector2 pivot;
-//    protected Vector2 position;
-//    protected Vector2 size;
-//    protected Vector2 scale;
-//    protected float rotation;
-    
-    //protected TextureRegion tex;
-    
+    protected Vector2 pivot;
     
     public Sprite(){
-//        pivot = new Vector2();
-//        position = new Vector2();
-//        size = new Vector2();
-//        scale = new Vector2(1,1);
+
         pivot = new Vector2();
         gdxSprite = new com.badlogic.gdx.graphics.g2d.Sprite();
+    }
+    
+    public Sprite(TextureRegion tex, float width, float height)
+    {
+        pivot = new Vector2();
+        gdxSprite = new com.badlogic.gdx.graphics.g2d.Sprite(tex);
+        this.setSize(width, height);
     }
     
     public void render(SpriteBatch batch, float deltime){
@@ -81,6 +79,11 @@ public abstract class Sprite {
     public void setSize(Vector2 size)
     {
         this.gdxSprite.setSize(size.x, size.y);
+    }
+    
+    public void setSize(float width, float height)
+    {
+        this.gdxSprite.setSize(width, height);
     }
 
     public float getWidth() {
@@ -133,6 +136,11 @@ public abstract class Sprite {
     public void setTex(TextureRegion tex) {
         gdxSprite.setRegion(tex);
         //this.tex = tex;
+    }
+
+    @Override
+    public void dispose() {
+        
     }
     
 }

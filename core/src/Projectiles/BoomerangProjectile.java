@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Shape;
 import java.util.ArrayList;
 import java.util.List;
+import nl.vossnack.jensgdx.AnimatedSprite;
 import nl.vossnack.jensgdx.Constants;
 import nl.vossnack.jensgdx.World.GameWorld;
 import nl.vossnack.jensgdx.PhysicsEntity;
@@ -33,23 +34,25 @@ public class BoomerangProjectile extends WeaponProjectile{
     
     @Override
     public void setUp() {
-        ArrayList<SpriteAnimationInfo> anims = new ArrayList<SpriteAnimationInfo>();
-        anims.add(new SpriteAnimationInfo("inair", 8, 1, 12f, 0, 0));
-        
         CircleShape colShape = new CircleShape();
         colShape.setRadius(0.17f);
         //colShape.setPosition(new Vector2(0.5f - (0.25f/2f), 0.5f - (0.25f/2f)));
         
-        super.setUp(colShape, BodyType.DynamicBody,
+        super.setUpBody(colShape, BodyType.DynamicBody,
                     Constants.CollisionLayer.CATEGORY_FRIENDLY, 
                     Constants.CollisionLayer.createMask(Constants.CollisionLayer.CATEGORY_ENEMY.getCode(),
-                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode()),
-                    "boomerang48px_8.png", anims, 0);
+                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode())
+                    );
         
-        this.getSprite(0).setSize(new Vector2(48, 48));
-        this.getSprite(0).setScale(new Vector2(0.17f, 0.17f));
-        this.getSprite(0).setPivot(new Vector2(24 * 0.17f, 24 * 0.17f));
+        ArrayList<SpriteAnimationInfo> anims = new ArrayList<SpriteAnimationInfo>();
+        anims.add(new SpriteAnimationInfo("inair", 8, 1, 12f, 0, 0));
         
+        AnimatedSprite boomerang = new AnimatedSprite("boomerang48px_8.png", anims, 0);
+        boomerang.setSize(new Vector2(48, 48));
+        boomerang.setScale(new Vector2(0.17f, 0.17f));
+        boomerang.setPivot(new Vector2(24 * 0.17f, 24 * 0.17f));
+        boomerang.loadAnimations();
+        this.addSprite(boomerang);
         
     }
     

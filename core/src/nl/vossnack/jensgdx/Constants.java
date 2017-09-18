@@ -5,6 +5,8 @@
  */
 package nl.vossnack.jensgdx;
 
+import com.badlogic.gdx.math.Vector2;
+
 /**
  *
  * @author Jens
@@ -25,6 +27,14 @@ public class Constants {
     
     public final static int LIGHT_RAY_COUNT = 128;
     public final static float SECONDS_IN_DAY = 100;
+    
+    public static Vector2 tileToWorldSpace(int x, int y){
+        return new Vector2(x * Constants.TILE_SIZE, y * Constants.TILE_SIZE);
+    }
+    
+    public static Vector2 worldToTileSpace(Vector2 worldPos){
+        return new Vector2((int)(worldPos.x / Constants.TILE_SIZE),(int)(worldPos.y / Constants.TILE_SIZE));
+    }
     
     public enum Direction{
         NORTH,

@@ -26,6 +26,8 @@ public class CharacterControls implements InputProcessor{
             SHOW_DEBUG;
     
     Vector2 AimDirection;
+    
+    
 
     @Override
     public boolean keyDown(int keycode) {
@@ -94,20 +96,13 @@ public class CharacterControls implements InputProcessor{
              this.keyDown(Input.Keys.SPACE);
             }
         }
+        
          return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-     
-            this.keyUp(Input.Keys.D);
-
-            this.keyUp(Input.Keys.A);
-
-            this.keyUp(Input.Keys.W);
-
-            this.keyUp(Input.Keys.S);
-            
+                 
             this.keyUp(Input.Keys.SPACE);
         
         return false;
@@ -115,25 +110,6 @@ public class CharacterControls implements InputProcessor{
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(screenX - 200 > Gdx.graphics.getWidth() / 2f){
-            this.keyDown(Input.Keys.D);
-            this.keyUp(Input.Keys.A);
-        }
-        else if(screenX + 200 < Gdx.graphics.getWidth() / 2f){
-            this.keyUp(Input.Keys.D);
-            this.keyDown(Input.Keys.A);
-        }
-        
-        if(screenY + 100 < Gdx.graphics.getHeight()/ 2f){
-            this.keyDown(Input.Keys.W);
-            this.keyUp(Input.Keys.S);
-        }
-        else if(screenY - 100 > Gdx.graphics.getHeight()/ 2f){
-            this.keyUp(Input.Keys.W);
-            this.keyDown(Input.Keys.S);
-        }
-
-        
         return false;
     }
 

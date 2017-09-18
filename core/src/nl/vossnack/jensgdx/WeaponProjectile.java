@@ -32,6 +32,11 @@ public abstract class WeaponProjectile extends PhysicsEntity{
     }
     
     @Override
+    public void loadEntity(){
+        super.loadEntity();
+    }
+    
+    @Override
     public void onContactBegin(PhysicsEntity other, Contact contact){
         if(other != this.getWeapon().getOwner()){
             ((CharacterWeaponRanged)this.getWeapon()).onHit(contact, this, other);

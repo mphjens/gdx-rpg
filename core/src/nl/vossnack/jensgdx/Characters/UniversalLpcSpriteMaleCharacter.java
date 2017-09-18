@@ -8,11 +8,13 @@ package nl.vossnack.jensgdx.Characters;
 import box2dLight.PointLight;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import java.util.ArrayList;
+import nl.vossnack.jensgdx.AnimatedSprite;
 import nl.vossnack.jensgdx.CharacterEntity;
 import nl.vossnack.jensgdx.CharacterStats;
 import nl.vossnack.jensgdx.Constants;
@@ -47,15 +49,21 @@ public class UniversalLpcSpriteMaleCharacter extends CharacterEntity{
         colShape.setRadius(0.35f);
         colShape.setPosition(new Vector2(0f, 0.35f));
         
+        super.setUpBody(colShape, BodyDef.BodyType.DynamicBody, 
+                Constants.CollisionLayer.CATEGORY_FRIENDLY, 
+                Constants.CollisionLayer.createMask(Constants.CollisionLayer.CATEGORY_ENEMY.getCode(), 
+                                                        Constants.CollisionLayer.CATEGORY_BOUNDS.getCode(), 
+                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode()));
+        
         CharacterStats charStats = new CharacterStats();
         charStats.speed = 0.7f;
 
-        super.setUp("universal-lpc-sprite_male_01_full.png" , anims, 0, colShape, charStats);
-        
-        this.getSprite(0).setSize(new Vector2(64, 64));
-        this.getSprite(0).setScale(new Vector2(0.35f, 0.35f));
-        this.getSprite(0).setPivot(new Vector2(32 * 0.35f, 0));
-        
+        AnimatedSprite bodyspr = new AnimatedSprite("universal-lpc-sprite_male_01_full.png" , anims, 0);
+        bodyspr.setSize(new Vector2(64, 64));
+        bodyspr.setScale(new Vector2(0.35f, 0.35f));
+        bodyspr.setPivot(new Vector2(32 * 0.35f, 0));
+        this.bodySprite = bodyspr;
+        this.addSprite(bodySprite);
         
         
         
@@ -79,8 +87,8 @@ public class UniversalLpcSpriteMaleCharacter extends CharacterEntity{
     
     @Override
     public void destroy(){
-        torchLight.remove(true);
-        
+        if(torchLight != null)
+            torchLight.remove(true);
         super.destroy();
     }
     
