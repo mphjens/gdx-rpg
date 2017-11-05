@@ -10,9 +10,9 @@ package nl.vossnack.jensgdx;
  * @author Jens
  */
 public class CharacterWeaponStats {
-    String name;
-    WeaponTypes weapontype;
-    float damage, range, speed;
+    public String name;
+    public WeaponTypes weapontype;
+    public float damage = 10f, range = 0.5f, speed = 1f;
     
     public enum WeaponTypes{
         ONE_HANDED_MELEE,

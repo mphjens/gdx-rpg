@@ -11,7 +11,7 @@ package nl.vossnack.jensgdx;
  */
 public class CharacterStats {
     
-    public float speed = 40.0f;
+    public float speed = 1.4f;
     public float attack_speed = 1.0f;
     public float max_health = 100;
     public float health = max_health;

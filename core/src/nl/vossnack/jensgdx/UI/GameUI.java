@@ -31,7 +31,7 @@ public class GameUI {
         
         UIConstants.UIFont.draw(batch, (1/deltatime) + " FPS", 16, 16);
         
-        Vector2 screenLoc = UIConstants.WorldToScreenCoords(this.controller.controlledCharacter.getPosition(), this.world.camera);
+        Vector2 screenLoc = UIConstants.WorldToScreenCoords(this.controller.controlledCharacter.getLocation(), this.world.camera);
         UIConstants.UIFont.draw(batch, "", screenLoc.x, screenLoc.y);
     }
     

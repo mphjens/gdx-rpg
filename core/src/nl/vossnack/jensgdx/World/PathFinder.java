@@ -53,7 +53,9 @@ public class PathFinder implements Disposable{
                 final PathFinderNode node = new PathFinderNode();
                 node.x = cX;
                 node.y = cY;
+                
                 world[cY][cX] = node;
+                
                 
 //                final PrimitiveEntity square = new PrimitiveEntity(PrimitiveEntity.PrimitiveType.Square, new Color(0, 1, 1, 0.5f), (1 - (2*margin)) * Constants.PHYSICS_SCALE, (1 - (2*margin)) * Constants.PHYSICS_SCALE);
 //                square.setPosition(new Vector2((node.x + margin) * Constants.PHYSICS_SCALE, ( node.y + margin) * Constants.PHYSICS_SCALE));

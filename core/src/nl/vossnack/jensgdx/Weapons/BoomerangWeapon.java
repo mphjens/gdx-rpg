@@ -40,8 +40,8 @@ public class BoomerangWeapon extends CharacterWeaponRanged{
     float percision = 4f;
     float blockMovementTime = 0.2f;
     
-    public BoomerangWeapon() {
-        super();
+    public BoomerangWeapon(CharacterWeaponStats stats) {
+        super(stats);
         this.setProjectilePrototype(BoomerangProjectile.class);
         this.setStats(new CharacterWeaponStats());
         this.setProjectileOffset(new Vector2(0f, 8f));
@@ -56,14 +56,14 @@ public class BoomerangWeapon extends CharacterWeaponRanged{
             
             velVector = new Vector2();
             if(!onWayBack){
-                targetDistance.set(velVector.add(turnPosition).sub(p.getPosition()));
+                targetDistance.set(velVector.add(turnPosition).sub(p.getLocation()));
                
                 if(targetDistance.len() < percision){
                     onWayBack = true;
                 }
             }   
             else{
-                targetDistance.set(velVector.add(this.getOwner().getPosition()).sub(p.getPosition()));
+                targetDistance.set(velVector.add(this.getOwner().getLocation()).sub(p.getLocation()));
                 
                 if(targetDistance.len() < percision){
                     timeSinceReturn = 0;
@@ -101,8 +101,8 @@ public class BoomerangWeapon extends CharacterWeaponRanged{
     public boolean fire(int firemode){
         if(super.fire(firemode)){
             timeSinceFire = 0;
-            System.out.println("Fired boomerang at " + this.getOwner().getPosition().toString());
-            this.firePosition = this.getOwner().getPosition().add(this.projectileOffset);
+            System.out.println("Fired boomerang at " + this.getOwner().getLocation().toString());
+            this.firePosition = this.getOwner().getLocation().add(this.projectileOffset);
                         
             //this.turnPosition = UIConstants.ScreenToWorldCoords(new Vector2(Gdx.input.getX(), (float)Gdx.input.getY()), this.owner.getWorld().camera);
             switch(this.getOwner().getFacingDirection()){

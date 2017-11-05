@@ -39,10 +39,11 @@ public class UniversalLpcSpriteMaleCharacter extends CharacterEntity{
         anims.add(new SpriteAnimationInfo("walk-down", 9, 1, 14f, 0, 10));
         anims.add(new SpriteAnimationInfo("walk-right", 9, 1, 14f, 0, 11));
         
-        anims.add(new SpriteAnimationInfo("attack-up", 6, 1, 14f, 0, 12));
-        anims.add(new SpriteAnimationInfo("attack-left", 6, 1, 14f, 0, 13));
-        anims.add(new SpriteAnimationInfo("attack-down", 6, 1, 14f, 0, 14));
-        anims.add(new SpriteAnimationInfo("attack-right", 6, 1, 14f, 0, 15));
+        //System.out.println("Adding " + "attack-" + Constants.Direction.NORTH.name());
+        anims.add(new SpriteAnimationInfo("attack-" + Constants.Direction.NORTH.name(), 6, 1, 30f, 0, 12));
+        anims.add(new SpriteAnimationInfo("attack-" + Constants.Direction.WEST.name(), 6, 1, 30f, 0, 13));
+        anims.add(new SpriteAnimationInfo("attack-" + Constants.Direction.SOUTH.name(), 6, 1, 30f, 0, 14));
+        anims.add(new SpriteAnimationInfo("attack-" + Constants.Direction.EAST.name(), 6, 1, 30f, 0, 15));
         
         CircleShape colShape = new CircleShape();
         //TODO: these units are box2d units (the world is scaled so 1 unit = 1 tile = 16px), support pixel space as well. 
@@ -50,18 +51,21 @@ public class UniversalLpcSpriteMaleCharacter extends CharacterEntity{
         colShape.setPosition(new Vector2(0f, 0.35f));
         
         super.setUpBody(colShape, BodyDef.BodyType.DynamicBody, 
-                Constants.CollisionLayer.CATEGORY_FRIENDLY, 
+                Constants.CollisionLayer.CATEGORY_ENEMY, 
                 Constants.CollisionLayer.createMask(Constants.CollisionLayer.CATEGORY_ENEMY.getCode(), 
                                                         Constants.CollisionLayer.CATEGORY_BOUNDS.getCode(), 
-                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode()));
+                                                        Constants.CollisionLayer.CATEGORY_OBSTACLE.getCode(),
+                                                        Constants.CollisionLayer.CATEGORY_FRIENDLY.getCode()));
         
         CharacterStats charStats = new CharacterStats();
-        charStats.speed = 0.7f;
+        charStats.speed = 1.4f;
+        this.stats = charStats;
 
-        AnimatedSprite bodyspr = new AnimatedSprite("universal-lpc-sprite_male_01_full.png" , anims, 0);
-        bodyspr.setSize(new Vector2(64, 64));
+        AnimatedSprite bodyspr = new AnimatedSprite("universal-lpc-sprite_male_01_full.png" , anims, 64, 64);
         bodyspr.setScale(new Vector2(0.35f, 0.35f));
-        bodyspr.setPivot(new Vector2(32 * 0.35f, 0));
+        bodyspr.setPivot(new Vector2(-32f * 0.35f, 0));
+        
+        //bodyspr.setPivot(new Vector2(0 * 0.35f, 0.05f));
         this.bodySprite = bodyspr;
         this.addSprite(bodySprite);
         

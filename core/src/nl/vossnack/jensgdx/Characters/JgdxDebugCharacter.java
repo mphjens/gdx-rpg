@@ -42,8 +42,11 @@ public class JgdxDebugCharacter extends CharacterEntity{
         anims.add(new SpriteAnimationInfo("walk-down", 9, 1, 14f, 0, 2));
         anims.add(new SpriteAnimationInfo("walk-right", 9, 1, 14f, 0, 3));
         
-        AnimatedSprite bodyspr = new AnimatedSprite("rpg_sprite_walk.png", anims, 0);
-        bodyspr.setSize(new Vector2(24, 32));
+        CharacterStats charStats = new CharacterStats();
+        charStats.speed = 1.4f;
+        this.stats = charStats;
+        
+        AnimatedSprite bodyspr = new AnimatedSprite("rpg_sprite_walk.png", anims, 24, 32);
         bodyspr.setPivot(new Vector2(12, 0));
         bodyspr.setScale(new Vector2(0.75f, 0.75f));
         bodySprite = bodyspr;

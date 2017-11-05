@@ -37,7 +37,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import nl.vossnack.jensgdx.Constants;
+import nl.vossnack.jensgdx.Entity;
 import nl.vossnack.jensgdx.PhysicsEntity;
+import nl.vossnack.jensgdx.WorldEntity;
 
 /**
  *
@@ -46,8 +48,7 @@ import nl.vossnack.jensgdx.PhysicsEntity;
 public class MapBodyBuilder {
 
     // The pixels per tile. If your tiles are 16x16, this is set to 16f
-    private static float ppt = 0;
-    
+
     public static ArrayList<PointLight> buildPointLights(TiledMapTileLayer layer, GameWorld gameworld){
         int width = layer.getWidth();
         int height = layer.getHeight();
@@ -64,9 +65,7 @@ public class MapBodyBuilder {
         return null;
     }
     
-    public static ArrayList<Body> buildTileShapes(TiledMapTileLayer layer,  HashMap<Integer,MapObject[]> shapeLibrary, World box2dWorld){
-        ppt = Constants.TILE_SIZE;
-        
+    public static ArrayList<Body> buildTileShapes(TiledMapTileLayer layer,  HashMap<Integer,MapObject[]> shapeLibrary, World box2dWorld){       
         ArrayList<Body> bodies = new ArrayList<Body>();
         int width = layer.getWidth();
         int height = layer.getHeight();
@@ -124,9 +123,45 @@ public class MapBodyBuilder {
         return bodies;
     }
     
+    public static void buildEntities(TiledMapTileLayer obstaclelayer, HashMap<Integer,MapObject[]> shapeLibrary, GameWorld world){
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+        
+        for(int y = 0; y < obstaclelayer.getHeight(); y++){
+            for(int x = 0; x < obstaclelayer.getWidth(); x++){
+                Cell cell = obstaclelayer.getCell(x, y);
+                if(cell != null){
+                   
+                    Shape shape = null;
+                    Vector2 offset = new Vector2(0 ,obstaclelayer.getTileHeight());
+                if(shapeLibrary.get(cell.getTile().getId()) != null && shapeLibrary.get(cell.getTile().getId()).length > 0){
+                    MapObject object = shapeLibrary.get(cell.getTile().getId())[0];
+                    
+                    if (object instanceof RectangleMapObject) {
+                        shape = getRectangleForMapObject((RectangleMapObject)object, offset);
+                    }
+                    else if (object instanceof PolygonMapObject) {
+                        shape = getPolygon((PolygonMapObject)object, offset);
+                    }
+                    else if (object instanceof PolylineMapObject) {
+                        shape = getPolyline((PolylineMapObject)object, offset, false);
+                    }
+                    else if (object instanceof CircleMapObject) {
+                        shape = getCircleForMapObject((CircleMapObject)object, offset);
+                    }
+                }
+                else {
+                    System.out.println("No object shape for WorldEntity, TileId = " + cell.getTile().getId());
+                }
+            
+                    WorldEntity e = new WorldEntity(cell, shape, x, y);
+                    e.addToWorld(world);
+                    e.setPosition(Constants.TILE_SIZE * x, Constants.TILE_SIZE * y);
+                }
+            }
+        }
+    }
 
     public static ArrayList<Body> buildpolyShapes(MapLayer obstaclelayer, World box2dWorld, boolean triggers) {
-        ppt = Constants.TILE_SIZE;
         MapObjects objects = obstaclelayer.getObjects();
 
         ArrayList<Body> bodies = new ArrayList<Body>();
@@ -184,10 +219,10 @@ public class MapBodyBuilder {
                 Constants.TILE_SIZE * Constants.CELL_OBSTACLE_SCALE);
         
         PolygonShape polygon = new PolygonShape();
-        Vector2 size = new Vector2((rectangle.x + rectangle.width * 0.5f) / ppt,
-                                   (rectangle.y + rectangle.height * 0.5f ) / ppt);
-        polygon.setAsBox(rectangle.width * 0.5f / ppt,
-                         rectangle.height * 0.5f / ppt,
+        Vector2 size = new Vector2((rectangle.x + rectangle.width * 0.5f) / Constants.TILE_SIZE,
+                                   (rectangle.y + rectangle.height * 0.5f ) / Constants.TILE_SIZE);
+        polygon.setAsBox(rectangle.width * 0.5f / Constants.TILE_SIZE,
+                         rectangle.height * 0.5f / Constants.TILE_SIZE,
                          size,
                          0.0f);
         return polygon;
@@ -197,18 +232,18 @@ public class MapBodyBuilder {
         float margin = (Constants.TILE_SIZE * (1.0f - Constants.CELL_OBSTACLE_SCALE));
         Circle circle = new Circle(x * Constants.TILE_SIZE + margin, y * Constants.TILE_SIZE + margin, Constants.TILE_SIZE * 0.5f * Constants.CELL_OBSTACLE_SCALE);
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(circle.radius / ppt);
-        circleShape.setPosition(new Vector2(circle.x / ppt, circle.y / ppt));
+        circleShape.setRadius(circle.radius / Constants.TILE_SIZE);
+        circleShape.setPosition(new Vector2(circle.x / Constants.TILE_SIZE, circle.y / Constants.TILE_SIZE));
         return circleShape;
     }
 
     private static PolygonShape getRectangleForMapObject(RectangleMapObject rectangleObject, Vector2 offset) {
         Rectangle rectangle = rectangleObject.getRectangle();
         PolygonShape polygon = new PolygonShape();
-        Vector2 size = new Vector2((offset.x + rectangle.x + rectangle.width * 0.5f) / ppt,
-                                   (offset.y + rectangle.y + rectangle.height * 0.5f ) / ppt);
-        polygon.setAsBox(rectangle.width * 0.5f / ppt,
-                         rectangle.height * 0.5f / ppt,
+        Vector2 size = new Vector2((offset.x + rectangle.x + rectangle.width * 0.5f) / Constants.TILE_SIZE,
+                                   (offset.y + rectangle.y + rectangle.height * 0.5f ) / Constants.TILE_SIZE);
+        polygon.setAsBox(rectangle.width * 0.5f / Constants.TILE_SIZE,
+                         rectangle.height * 0.5f / Constants.TILE_SIZE,
                          size,
                          0.0f);
         return polygon;
@@ -217,8 +252,8 @@ public class MapBodyBuilder {
     private static CircleShape getCircleForMapObject(CircleMapObject circleObject, Vector2 offset) {
         Circle circle = circleObject.getCircle();
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(circle.radius / ppt);
-        circleShape.setPosition(new Vector2(offset.x + circle.x / ppt, circle.y / ppt));
+        circleShape.setRadius(circle.radius / Constants.TILE_SIZE);
+        circleShape.setPosition(new Vector2(offset.x + circle.x / Constants.TILE_SIZE, circle.y / Constants.TILE_SIZE));
         return circleShape;
     }
 
@@ -230,7 +265,7 @@ public class MapBodyBuilder {
 
         for (int i = 0; i < vertices.length; ++i) {
             //System.out.println(vertices[i]);
-            worldVertices[i] = vertices[i] / ppt;
+            worldVertices[i] = vertices[i] / Constants.TILE_SIZE;
         }
 
         polygon.set(worldVertices);
@@ -243,8 +278,8 @@ public class MapBodyBuilder {
 
         for (int i = 0; i < vertices.length / 2; ++i) {
             worldVertices[i] = new Vector2();
-            worldVertices[i].x = (offset.x + vertices[i * 2]) / ppt;
-            worldVertices[i].y = (offset.y + vertices[i * 2 + 1]) / ppt;
+            worldVertices[i].x = (offset.x + vertices[i * 2]) / Constants.TILE_SIZE;
+            worldVertices[i].y = (offset.y + vertices[i * 2 + 1]) / Constants.TILE_SIZE;
         }
 
         ChainShape chain = new ChainShape(); 

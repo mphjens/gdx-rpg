@@ -20,7 +20,14 @@ public abstract class CharacterWeapon {
     protected CharacterEntity owner;
     protected CharacterWeaponStats stats;
     
-    public CharacterWeapon(){
+    public CharacterWeapon(CharacterWeaponStats stats){
+        if(stats != null)
+        {
+            this.stats = stats;
+        }
+        else{
+            this.stats = new CharacterWeaponStats();
+        }
         
     }
         

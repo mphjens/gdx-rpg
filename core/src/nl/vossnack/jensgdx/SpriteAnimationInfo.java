@@ -5,6 +5,10 @@
  */
 package nl.vossnack.jensgdx;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 /**
  *
  * @author Jens
@@ -14,12 +18,15 @@ public class SpriteAnimationInfo {
     protected final String name;
     protected final int numFrames;
     protected final float fps;
+    protected PlayMode mode = PlayMode.NORMAL;
     
-    protected final int frameCols;
-    protected final int frameRows;
-    protected final int startCol;
-    protected final int startRow;
-    protected final int skipBegin;
+    protected TextureRegion[] frames = null;
+    
+    protected int frameCols = -1;
+    protected int frameRows = -1;
+    protected int startCol = -1;
+    protected int startRow = -1;
+    protected int skipBegin = -1;
     
     public SpriteAnimationInfo(String name, int frameCols, int frameRows, float fps, int startCol, int startRow){
         this.name = name;
@@ -43,6 +50,14 @@ public class SpriteAnimationInfo {
         
         this.numFrames = numFrames;
         this.skipBegin = skipBegin;
+    }
+    
+    public SpriteAnimationInfo(String name, TextureRegion[] frames, float fps, PlayMode mode){
+        this.name = name;
+        this.frames = frames;
+        this.numFrames = this.frames.length;
+        this.fps = fps;
+        this.mode = mode;
     }
     
 }

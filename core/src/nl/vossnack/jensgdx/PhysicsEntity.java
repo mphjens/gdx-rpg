@@ -60,13 +60,15 @@ public abstract class PhysicsEntity extends Entity{
         if(this.isLoaded()){
             body = world.physWorld.createBody(bd);
             body.setFixedRotation(true);
-            Fixture f = body.createFixture(bodyShape, 1);
-            Filter filter = f.getFilterData();
-            filter.categoryBits = this.collisionCategory.getCode();
-            filter.maskBits = this.collisionMask;
-            f.setFilterData(filter);
-            body.setTransform(new Vector2(this.getPosition()), 0);
-            bodyShape.dispose();
+            if(bodyShape != null){    
+                Fixture f = body.createFixture(bodyShape, 1);
+                Filter filter = f.getFilterData();
+                filter.categoryBits = this.collisionCategory.getCode();
+                filter.maskBits = this.collisionMask;
+                f.setFilterData(filter);
+                body.setTransform(new Vector2(this.getLocation()), 0);
+                bodyShape.dispose();
+            } 
         } else{
             System.out.println("Can't add unloaded entity to world!");
         }
@@ -86,7 +88,7 @@ public abstract class PhysicsEntity extends Entity{
     }
         
     @Override
-    public Vector2 getPosition(){
+    public Vector2 getLocation(){
         return new Vector2(this.body.getPosition()).scl(Constants.PHYSICS_SCALE);
     }
     

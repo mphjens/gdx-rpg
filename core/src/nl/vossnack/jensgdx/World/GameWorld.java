@@ -6,6 +6,7 @@
 package nl.vossnack.jensgdx.World;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +21,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import nl.vossnack.jensgdx.Constants;
 import nl.vossnack.jensgdx.Entity;
@@ -41,13 +44,15 @@ public class GameWorld implements ContactListener{
     
     public PathFinder pathFinder;
     
+    public boolean zSort = true;
+    
     public List<Entity> entityList;
     SpriteBatch worldSpriteBatch;
         
     public RayHandler lightingRayHandler;
     
     public OrthographicCamera camera;
-    private Matrix4 scaledProjectionMatrix;
+    public Matrix4 scaledProjectionMatrix;
 
     public boolean isLoaded;
     private double timer = 0;
@@ -160,9 +165,25 @@ String fragmentShader = "#ifdef GL_ES\n" +
     
     public void render(float deltatime){
         if(isLoaded){
+            if(zSort){
+                Collections.sort(this.entityList,new Comparator<Entity>(){
+                @Override
+                public int compare(final Entity lhs,Entity rhs) {
+                    int diff = Math.subtractExact((int)rhs.getLocation().y , (int)lhs.getLocation().y);
+                    if(diff > 0)
+                        return 1;
+                    if(diff < 0)
+                        return -1;
+                    
+                    return 0;
+                  }
+              });
+            }
+            
             timer += deltatime;
             
             stepPhysics(deltatime, Constants.USE_FIXED_STEP_PHYS);
+            GdxAI.getTimepiece().update(deltatime);
             
             camera.update();
             scaledProjectionMatrix.set(camera.combined).scl(Constants.PHYSICS_SCALE);

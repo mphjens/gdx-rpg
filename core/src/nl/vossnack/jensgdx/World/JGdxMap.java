@@ -85,8 +85,7 @@ public class JGdxMap implements Disposable{
             if(name.startsWith("obstacles")){
                 TiledMapTileLayer tileLayer = (TiledMapTileLayer)layer;
                 
-                bgIdxList.add(idx);
-                MapBodyBuilder.buildTileShapes(tileLayer, loader.tilesetCollisionObjects, world.physWorld);
+                MapBodyBuilder.buildEntities(tileLayer, loader.tilesetCollisionObjects, world);
                 continue;
             }
             if(name.startsWith("polyobstacles")){

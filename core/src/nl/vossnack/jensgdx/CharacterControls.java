@@ -48,7 +48,7 @@ public class CharacterControls implements InputProcessor{
                 this.ATTACK = true;
                 break;
             case Input.Keys.NUM_1:
-                this.SHOW_DEBUG = true;
+                this.SHOW_DEBUG = !this.SHOW_DEBUG;
                 break;
         }
         
@@ -75,7 +75,7 @@ public class CharacterControls implements InputProcessor{
                 this.ATTACK = false;
                 break;
             case Input.Keys.NUM_1:
-                this.SHOW_DEBUG = false;
+                //this.SHOW_DEBUG = false;
                 break;
         }
         

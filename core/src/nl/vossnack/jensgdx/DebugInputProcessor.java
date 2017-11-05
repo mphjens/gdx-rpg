@@ -55,8 +55,8 @@ public class DebugInputProcessor implements InputProcessor{
             Vector2 WorldLoc = UIConstants.ScreenToWorldCoords(new Vector2(screenX, screenY), gameController._world.camera);
             int x = (int)(WorldLoc.x / Constants.TILE_SIZE);
             int y = (int)(WorldLoc.y / Constants.TILE_SIZE);
-            int playerX = (int)(this.gameController.controlledCharacter.getPosition().x / Constants.TILE_SIZE);
-            int playerY = (int)((this.gameController.controlledCharacter.getPosition().y + 4f) / Constants.TILE_SIZE);
+            int playerX = (int)(this.gameController.controlledCharacter.getLocation().x / Constants.TILE_SIZE);
+            int playerY = (int)((this.gameController.controlledCharacter.getLocation().y + 4f) / Constants.TILE_SIZE);
             System.out.println("to: " + x + ", " + y);
             
             List<PathFinderNode> path = algo.getPath(gameController._world.pathFinder.world[playerY][playerX], gameController._world.pathFinder.world[y][x]);

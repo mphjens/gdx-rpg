@@ -151,7 +151,7 @@ public class AStarPathfindingAlgorithm extends PathfindingAlgorithm{
         PathFinderNode north = null, northeast = null, east = null, southeast = null, south = null, southwest = null, west = null, northwest = null;
         if(node.y + 1 < pathfinder.world.length && !pathfinder.world[node.y + 1][node.x].occupied){
             north = pathfinder.world[node.y + 1][node.x];
-            north.cost = 1.0f;
+            //north.cost = 1.0f;
         }
         
         if(node.y + 1 < pathfinder.world.length && node.x + 1 < pathfinder.world[0].length && !pathfinder.world[node.y + 1][node.x + 1].occupied){
@@ -161,7 +161,7 @@ public class AStarPathfindingAlgorithm extends PathfindingAlgorithm{
         
         if(node.x + 1 < pathfinder.world[0].length && !pathfinder.world[node.y][node.x + 1].occupied){
             east = pathfinder.world[node.y][node.x + 1];
-            east.cost = 1.0f;
+            //east.cost = 1.0f;
         }
             
         
@@ -173,7 +173,7 @@ public class AStarPathfindingAlgorithm extends PathfindingAlgorithm{
         
         if(node.y - 1 >= 0 && !pathfinder.world[node.y - 1][node.x].occupied){
             south = pathfinder.world[node.y - 1][node.x];
-            south.cost = 1.0f;
+            //south.cost = 1.0f;
         }
         
         if(node.y - 1 >= 0 && node.x - 1 >= 0 && !pathfinder.world[node.y - 1][node.x - 1].occupied){
@@ -183,7 +183,7 @@ public class AStarPathfindingAlgorithm extends PathfindingAlgorithm{
         
         if(node.x - 1 >= 0 && !pathfinder.world[node.y][node.x - 1].occupied){
             west = pathfinder.world[node.y][node.x - 1];
-            west.cost = 1.0f;
+            //west.cost = 1.0f;
         }
         
         if(node.y + 1 < pathfinder.world.length && node.x - 1 >= 0 && !pathfinder.world[node.y + 1][node.x - 1].occupied){

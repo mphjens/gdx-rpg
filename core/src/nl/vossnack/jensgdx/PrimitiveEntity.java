@@ -28,6 +28,8 @@ public class PrimitiveEntity extends Entity{
     float width, height;
     boolean isDirty;
     
+    Sprite primitiveSprite;
+    
     public PrimitiveEntity(PrimitiveType type, Color color, float width, float height){
         this.type = type;
         this.width = width;
@@ -57,9 +59,18 @@ public class PrimitiveEntity extends Entity{
         TextureRegion tex = new TextureRegion(new Texture(myPixMap));
         myPixMap.dispose();
         
-        this.removeAllSprites();
-        this.addSprite(new Sprite(tex, width, height));
-        this.getSprite(0).setTex(tex);
+        if(primitiveSprite == null)
+        {
+            primitiveSprite = new Sprite(tex, width, height);
+            this.addSprite(primitiveSprite);
+        }
+        else{
+            this.getSprite(0).setTex(tex);
+        }
+        
+        
+        
+        
     }
     
     public void setColor(Color color){

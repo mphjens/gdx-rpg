@@ -4,11 +4,38 @@
   <auxiliary>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-      <group/>
+      <group>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/CharacterEntity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Constants.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/PhysicsEntity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Entity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/GameController.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/World/Box2dRaycastCollisionDetector.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/World/GameWorld.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/screens/GameScreen.java</file>
+      </group>
     </open-files>
     <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-      <group/>
+      <group>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/WorldEntity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/PhysicsEntity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Entity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/PrimitiveEntity.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/AnimatedSprite.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Characters/UniversalLpcSpriteMaleCharacter.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/World/GameWorld.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/screens/GameScreen.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/CharacterWeaponMelee.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/SpriteAnimationInfo.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/CharacterWeaponStats.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Weapons/DebugSwordWeapon.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/GameController.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/World/Box2dRaycastCollisionDetector.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/CharacterStats.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/nl/vossnack/jensgdx/Sprite.java</file>
+        <file>file:/D:/Projecten/JensGdx+Android/core/src/Projectiles/BoomerangProjectile.java</file>
+      </group>
     </open-files>
   </auxiliary>
 </gradle-project-properties>

@@ -23,8 +23,8 @@ public abstract class CharacterWeaponRanged extends CharacterWeapon{
     protected Vector2 projectileOffset;
     protected List<WeaponProjectile> projectiles;
     
-    public CharacterWeaponRanged() {
-        super();
+    public CharacterWeaponRanged(CharacterWeaponStats stats) {
+        super(stats);
         this.projectiles = new ArrayList<WeaponProjectile>();
     }
     
@@ -68,7 +68,7 @@ public abstract class CharacterWeaponRanged extends CharacterWeapon{
                 p.setWeapon(this);
                 p.setUp();
                 p.loadEntity();
-                p.addToWorld(this.owner.world, this.owner.getPosition().add(projectileOffset));
+                p.addToWorld(this.owner.world, this.owner.getLocation().add(projectileOffset));
                 //p.setSpritePositions(this.getOwner().getSpritePosition(0));
                 p.getBody().setSleepingAllowed(false);
                 p.getBody().isBullet();

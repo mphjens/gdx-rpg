@@ -17,20 +17,21 @@ import com.badlogic.gdx.utils.Disposable;
 public class Sprite implements Disposable{
     
     com.badlogic.gdx.graphics.g2d.Sprite gdxSprite;
-    
-    protected Vector2 pivot;
+    public boolean anchored = true;
+    protected Vector2 drawOffset;
     
     public Sprite(){
 
-        pivot = new Vector2();
+        drawOffset = new Vector2();
         gdxSprite = new com.badlogic.gdx.graphics.g2d.Sprite();
     }
     
     public Sprite(TextureRegion tex, float width, float height)
     {
-        pivot = new Vector2();
+        drawOffset = new Vector2();
         gdxSprite = new com.badlogic.gdx.graphics.g2d.Sprite(tex);
         this.setSize(width, height);
+        
     }
     
     public void render(SpriteBatch batch, float deltime){
@@ -53,27 +54,31 @@ public class Sprite implements Disposable{
     //}
     
     public void setPivot(Vector2 pivot){
-        this.pivot = pivot;
+        this.drawOffset.set(pivot);
     }
 
     /**
      * @return the position
      */
     public float getX() {
-        return this.gdxSprite.getX() + pivot.x;
+        return this.gdxSprite.getX() - drawOffset.x;
     }
     
     public float getY() {
-        return this.gdxSprite.getY() + pivot.y;
+        return this.gdxSprite.getY() - drawOffset.y;
     }
 
     public void setX(float x) {
-        this.gdxSprite.setX(x - pivot.x);
+        this.gdxSprite.setX(x + drawOffset.x);
     }
     
-
     public void setY(float y) {
-        this.gdxSprite.setY(y - pivot.y);
+        this.gdxSprite.setY(y + drawOffset.y);
+    }
+    
+    public void setLocation(Vector2 loc){
+        this.gdxSprite.setX(loc.x + drawOffset.x);
+        this.gdxSprite.setY(loc.y + drawOffset.y);
     }
     
     public void setSize(Vector2 size)
@@ -107,6 +112,7 @@ public class Sprite implements Disposable{
      */
     public void setScale(Vector2 scale) {
         this.gdxSprite.setScale(scale.x, scale.y);
+        //this.drawOffset.scl(scale);
     }
 
     /**

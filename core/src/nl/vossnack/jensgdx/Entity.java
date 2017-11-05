@@ -24,21 +24,26 @@ public abstract class Entity implements Disposable{
     protected GameWorld world;
     
     private ArrayList<Sprite> sprites;
-    protected Vector2 position;
+    protected Vector2 location;
     protected boolean inWorld;
     protected boolean loaded;
     protected boolean destroyed;
     
     public Entity(){
         sprites = new ArrayList<Sprite>();
+        location = new Vector2();
     }
     
     public void update(float deltatime){
-        this.setSpritePositions(this.position);
+        this.setSpritePositions(this.location);
     }
             
     public void setUp(TextureRegion tex, float width, float height) {
         sprites.add(new Sprite(tex, width, height));
+    }
+    
+    public void setUp(List<SpriteAnimationInfo> animations, float width, float height){
+        sprites.add(new AnimatedSprite(animations, width, height));
     }
         
     public void loadEntity(){
@@ -52,12 +57,12 @@ public abstract class Entity implements Disposable{
     }
     
     public void destroy(){
-        if(this.inWorld){
-            this.world.removeEntity(this);
-        }
-        else{
-            System.out.print(this.name + " was not in a world when destroy() was called");
-        }
+        //if(this.inWorld){
+        //    this.world.removeEntity(this);
+        //}
+        //else{
+        //    System.out.print(this.name + " was not in a world when destroy() was called");
+        //}
         
         destroyed = true;
         this.dispose();
@@ -78,22 +83,24 @@ public abstract class Entity implements Disposable{
     }
     
     public void setPosition(Vector2 pos){
-        this.position = pos;
+        this.location = pos;
     }
 
     public void setPosition(float x, float y){
         this.setPosition(new Vector2(x, y));
     }
     
-    public Vector2 getPosition(){
-        return this.position;
+    public Vector2 getLocation(){
+        return this.location;
     }
     
      
     public void setSpritePositions(Vector2 pos){
         for(Sprite s : this.sprites){
-            s.setX(pos.x);
-            s.setY(pos.y);
+            if(s.anchored){
+                s.setX(pos.x);
+                s.setY(pos.y);
+            }
         }
         //this.sprites.get(index).setPosition(pos);
     }

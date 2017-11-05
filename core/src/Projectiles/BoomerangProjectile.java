@@ -47,8 +47,7 @@ public class BoomerangProjectile extends WeaponProjectile{
         ArrayList<SpriteAnimationInfo> anims = new ArrayList<SpriteAnimationInfo>();
         anims.add(new SpriteAnimationInfo("inair", 8, 1, 12f, 0, 0));
         
-        AnimatedSprite boomerang = new AnimatedSprite("boomerang48px_8.png", anims, 0);
-        boomerang.setSize(new Vector2(48, 48));
+        AnimatedSprite boomerang = new AnimatedSprite("boomerang48px_8.png", anims, 48, 48);
         boomerang.setScale(new Vector2(0.17f, 0.17f));
         boomerang.setPivot(new Vector2(24 * 0.17f, 24 * 0.17f));
         boomerang.loadAnimations();
